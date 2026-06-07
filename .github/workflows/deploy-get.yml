@@ -1,0 +1,37 @@
+name: Deploy Get Salary Lambda
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'get-salary/**' # 👈 get-salary フォルダ内の変更だけを監視！
+
+jobs:
+  deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    
+    # OIDC認証とリポジトリ読み込みに必要な「通行証」の設定
+    permissions:
+      id-token: write # GitHub公式の偽造不可能な身分証明書（IDトークン）を発行する
+      contents: read  # ロボットがコードをチェックアウト（ダウンロード）する
+
+    steps:
+      # 1. まっさらなUbuntuロボットに、あなたのソースコードをダウンロードして取り込む
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      # 2. GitHubの身分証明書をAWSに提出し、10分間だけ有効な使い捨ての鍵（一時資格情報）をもらう
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_GET_ROLE_ARN }} # 👈 GitHub SecretsからロールのARNを安全に読み込む
+          aws-region: us-west-2                          # 自分のリージョン
+
+      # 3. 指定したフォルダ（./get-salary）のコードをZip化し、AWSのLambdaに上書きデプロイする
+      - name: Deploy Lambda Function
+        uses: aws-actions/aws-lambda-deploy@v2
+        with:
+          function-name: get-salary-function # 👈 Lambda関数名
+          code-artifacts-dir: ./get-salary   # デプロイ対象のフォルダ
