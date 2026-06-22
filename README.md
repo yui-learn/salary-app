@@ -1,16 +1,19 @@
 # Salary App
-自身の給与明細をアップロードして自動で給与テーブルを作成するアプリを開発中です。  
-現時点では、AWSのS3に給与明細ファイル(PDF)を手動アップロードするとlambdaでPDFファイルからテキスト抽出し、DynamoDBに保存する工程まで完了してます。  
-また、GitHub ActionsによってLambdaコードが自動デプロイする仕組みを構築しました。  
+給与明細（PDF）をアップロードし、給与データを自動で蓄積・可視化するアプリを開発しています。  
+現在は、S3へアップロードされた給与明細ファイルをAWS Lambdaで処理し、  
+PDFから抽出したデータをDynamoDBへ保存する機能を実装済みです。  
+また、GitHub Actionsを利用し、Lambdaコードを自動デプロイするCI/CD環境を構築しています。  
 
 ## 使用技術
 - Python
 - AWS Lambda
+- Amazon S3
+- Amazon DynamoDB
 - GitHub Actions
 
 ## 今後の予定
-- DynamoDBにあるデータを取得するLambdaデプロイ
-- ダッシュボードから給与明細ファイルをアップロードし、S3に保存するLambdaデプロイ
-- API GatewayでHTTPS APIの作成
-- 可視化ダッシュボード(フロントエンド)開発
-- Amazon Cognitoによるパスワード認証
+- DynamoDBからデータを取得するAPIの実装
+- 給与明細アップロード機能の実装
+- Amazon API GatewayによるAPI公開
+- フロントエンドの開発および可視化ダッシュボード作成
+- Amazon Cognitoによる認証機能の実装
